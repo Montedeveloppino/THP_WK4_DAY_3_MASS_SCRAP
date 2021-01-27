@@ -3,6 +3,8 @@ class Scrapper
   require 'open-uri'
   require 'rubygems'
   $principal_adress="http://annuaire-des-mairies.com"
+  @array_name = Array.new
+  @array_mail = Array.new
   
   
   def scrapper
@@ -10,8 +12,6 @@ class Scrapper
    end
   
   def city_mail
-      array_name = []
-      array_mail = []
       page_city = Nokogiri::HTML(URI.open("http://annuaire-des-mairies.com/44/nantes.html"))
       mail_city = page_city.xpath('//html/body/div[1]/main/section[2]/div/table/tbody/tr[4]/td[2]')
       name_city = page_city.xpath('//html/body/div[1]/main/section[1]/div/div/div/h1')
@@ -61,4 +61,5 @@ class Scrapper
        return hash
    end
   print city_mail()
-   print mairie(scrapper)
+  print mairie(scrapper)
+end
