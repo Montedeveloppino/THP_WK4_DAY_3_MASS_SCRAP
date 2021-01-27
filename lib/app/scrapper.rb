@@ -1,25 +1,25 @@
-require 'nokogiri'
-require 'open-uri'
-require 'json'
-require 'google_drive'
+require 'bundler'
+Bundler.require
+
+require_relative "email_sender"
 
 class Scrapper
   attr_accessor :doc
   attr_accessor :site_url
 
   def initialize(site_url)
-    @doc = Nokogiri::HTML(open(site_url))
+    @doc = Nokogiri::HTML(URI.open(site_url))
     @site_url = site_url
   end
 
   def get_mail
-    pages = Nokogiri::HTML(open(@site_url))
+    pages = Nokogiri::HTML(URI.open(@site_url))
     mail = pages.xpath('//section[2]//tr[4]/td[2]').text
     return mail
   end
   
   def get_url
-    @doc = Nokogiri::HTML(open(@site_url + "val-d-oise.html"))
+    @doc = Nokogiri::HTML(URI.open(@site_url + "val-d-oise.html"))
     towns = @doc.xpath('//*[@class="lientxt"]')
     townhall = Array.new
     
@@ -33,6 +33,7 @@ class Scrapper
   end
 
   def save_as_spreadsheet(array_to_store)
+    array_to_store = Array.new
     # Creates a session with api google
     session = GoogleDrive::Session.from_config("config.json")
 
@@ -54,6 +55,7 @@ class Scrapper
   end
 
   def save_as_json(array_to_store)
+    array_to_store = Array.new
     File.open("emails.json","w") do |f|
       f.write(JSON.pretty_generate(array_to_store))
     end
