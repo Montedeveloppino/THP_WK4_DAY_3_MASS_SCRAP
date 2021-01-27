@@ -4,12 +4,9 @@ Bundler.require
 
 $:.unshift File.expand_path("./../lib", __FILE__)
 
-require 'views/index'
 require 'app/scrapper'
-require 'app/email_sender'
-require 'views/done'
-require 'csv'
+require 'db/thing'
 
-CSV.read("things.csv")
+CSV.read("thing.csv")
 
-Scrapper.new.perform
+#Scrapper.new.perform
