@@ -12,7 +12,6 @@ def get_townhall_urls
   page = Nokogiri::HTML(URI.open("http://annuaire-des-mairies.com/val-d-oise.html"))
     cities = page.xpath('//*[@class="lientxt"]')
 
-    ary_result = [] # init arrray
     
     cities.each do |city|
         h_cities_email = {} #init hash
@@ -22,5 +21,3 @@ def get_townhall_urls
     end
     return ary_result
 end
-
-get_townhall_urls

@@ -1,8 +1,6 @@
 require 'bundler'
 Bundler.require
 
-require_relative "email_sender"
-
 class Scrapper
   attr_accessor :doc
   attr_accessor :site_url
@@ -40,7 +38,7 @@ class Scrapper
     # First worksheet of
     # https://docs.google.com/spreadsheet/ccc?key=pz7XtlQC-PYx-jrVMJErTcg
     # Or https://docs.google.com/a/someone.com/spreadsheets/d/pz7XtlQC-PYx-jrVMJErTcg/edit?usp=drive_web
-    ws = session.spreadsheet_by_key("aJLsbvjxXFvfqfcbhA7OTFw3").worksheets[0] #!!!!!!!-======DON'T FORGET TO CHANGE THE KEY!!!!!!
+    ws = session.spreadsheet_by_key("t1SeSynifwcmS6c_Z9OgQCgT").worksheets[0] #!!!!!!!-======DON'T FORGET TO CHANGE THE KEY!!!!!!
     # OK pour moi ws = session.spreadsheet_by_title("test_sh").worksheets.first
 
     # Changes content of cells.
@@ -60,5 +58,26 @@ class Scrapper
       f.write(JSON.pretty_generate(array_to_store))
     end
     system('mv emails.json db/emails.json')
+  end
+  
+  def get_townhall_email(townhall_URL)
+    page = Nokogiri::HTML(URI.open(townhall_URL))
+    email = page.xpath('//main//section[2]//div//table//tbody//tr[4]/td[2]').text
+    return email
+  end
+
+  def get_townhall_urls
+    page = Nokogiri::HTML(URI.open("http://annuaire-des-mairies.com/val-d-oise.html"))
+    cities = page.xpath('//*[@class="lientxt"]')
+
+    ary_result = [] # init arrray
+    
+    cities.each do |city|
+        h_cities_email = {} #init hash
+        temp = city['href'].delete_prefix('./')
+        h_cities_email[city.text] = get_townhall_email("http://annuaire-des-mairies.com/#{temp}")
+        ary_result << h_cities_email
+    end
+    return ary_result
   end
 end
